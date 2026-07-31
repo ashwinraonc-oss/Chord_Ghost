@@ -6,14 +6,14 @@ import numpy as np
 
 note_dictionary = {0: "C", 1: "C#", 2: "D", 3: "D#", 4: "E", 5: "F", 6: "F#", 7: "G", 8: "G#", 9: "A", 10: "A#", 11: "B"}
 chord_type = {frozenset([0,4,7]): "Major", frozenset([0,3,7]): "Minor", frozenset([0,3,6]): "Diminished", frozenset([0,4,8]): "Augmented", frozenset([0,4,7,10]): "Dominant 7th", frozenset([0,4,7,11]): "Major 7th"}
-files = glob.glob("./Notes/*.wav")
+files = glob.glob("./Notes/C#diminished/*.wav")
 note_set = set()
 
 
 
 def frequency_to_pitch(freq) -> int:
-    res = 12 * np.log2((freq / 440)) + 69
-    return res
+    midi = 12 * np.log2((freq / 440)) + 69
+    return midi
 def detect_pitch_class(filepath) -> int | None:
     raw, sr = librosa.load(filepath)
     f0, voiced_flag, voiced_probs = librosa.pyin(raw, 

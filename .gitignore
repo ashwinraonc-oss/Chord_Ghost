@@ -1,0 +1,20 @@
+# --- Audio test data (regenerable data, not code) ---
+Notes/
+Unused Audio/
+*.wav
+
+# --- Python bytecode cache ---
+__pycache__/
+*.pyc
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+
+# --- Jupyter / VS Code interactive checkpoints ---
+.ipynb_checkpoints/
+
+# --- OS / editor cruft ---
+.DS_Store
+Thumbs.db

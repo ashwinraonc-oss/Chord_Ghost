@@ -24,7 +24,6 @@ def detect_pitch_class(filepath) -> int | None:
     pitch_class = (round(note_number)%12)
 
     return pitch_class
-
 def identify_chord(pitch_classes, chord_type):
     best_score = float("-inf")
     best_candidate = None
@@ -40,8 +39,6 @@ def identify_chord(pitch_classes, chord_type):
                 best_candidate = (root, name)
     return (best_candidate, best_score)
 
-# %%
-
 
 
 
@@ -50,7 +47,6 @@ def identify_chord(pitch_classes, chord_type):
 
 
 
-# %%
 
 
 
@@ -58,6 +54,3 @@ def identify_chord(pitch_classes, chord_type):
 
 
 
-
-
-# %%

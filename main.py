@@ -9,7 +9,7 @@ chord_type = {frozenset([0,4,7]): "Major",
               frozenset([0,3,7]): "Minor",
               frozenset([0,3,6]): "Dim",
               frozenset([0,4,8]): "Aug",
-              frozenset([0,4,7,10]): "Dom7",
+              frozenset([0,4,7,10]): "7",
               frozenset([0,4,7,11]): "Maj7",
               frozenset([0,3,7,10]): "m7",
               frozenset([0,3,6,10]): "m7♭5",
@@ -30,10 +30,10 @@ def main():
     if candidate is not None and score >= 0:
         root = note_dictionary[candidate[0]]
         quality = candidate[1]
-        chord = root + " " + quality
+        chord = root + quality
     else:
         chord = "Unknown Chord Voicing"
-    return (chord, score)
+    return (f"chord: {chord}", f"score: {score}")
 
 if __name__ == "__main__":
     print(main())

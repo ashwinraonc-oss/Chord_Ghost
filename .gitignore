@@ -1,6 +1,7 @@
 # --- Audio test data (regenerable data, not code) ---
 Notes/
 Unused Audio/
+Notes Test/
 *.wav
 
 # --- Python bytecode cache ---

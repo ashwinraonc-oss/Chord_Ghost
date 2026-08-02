@@ -24,12 +24,21 @@ def detect_pitch_class(filepath) -> int | None:
     pitch_class = (round(note_number)%12)
 
     return pitch_class
+
 def identify_chord(pitch_classes, chord_type):
+    best_score = float("-inf")
+    best_candidate = None
     for root in pitch_classes:
-        subset = {(item - root)%12 for item in pitch_classes}
-        if frozenset(subset) in chord_type:
-            return (root, chord_type[frozenset(subset)])
-    return None
+        for template, name in chord_type.items():
+            rel = {(item - root)%12 for item in pitch_classes}
+            matched_notes = template.intersection(rel)
+            missing_notes = template - rel
+            extra_notes = rel - template
+            score = len(matched_notes) - len(missing_notes) - len(extra_notes)
+            if score > best_score:
+                best_score = score
+                best_candidate = (root, name)
+    return (best_candidate, best_score)
 
 # %%
 

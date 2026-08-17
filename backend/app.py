@@ -1,6 +1,11 @@
 from fastapi import FastAPI, UploadFile, File
 import os, tempfile
 from detection.IdentifyChord import detect_pitch_class, identify_chord
+from fastapi.middleware.cors import CORSMiddleware
+origins = [
+    "http://localhost:5173",
+]
+
 
 note_dictionary = {0: "C", 1: "C#", 2: "D", 3: "D#", 
                    4: "E", 5: "F", 6: "F#", 7: "G", 
@@ -18,6 +23,14 @@ chord_type = {frozenset([0,4,7]): "Major",
               frozenset([0,5,7]): "sus4"}
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health")
 def health():

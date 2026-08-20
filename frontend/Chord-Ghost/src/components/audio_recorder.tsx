@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./audio_recorder.css";
+import Fretboard from "./find_notes";
 
 export default function SetUpAudio() {
   const [isRecording, setIsRecording] = useState(false);
@@ -7,9 +8,12 @@ export default function SetUpAudio() {
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const chunks = useRef<Blob[]>([]);
   const [capturedNotes, setCapturedNotes] = useState<Blob[]>([]);
-  const [result, setResult] = useState<{ chord: string; score: number } | null>(
-    null,
-  );
+  const [result, setResult] = useState<{
+    chord: string;
+    score: number;
+    notes: number[];
+    root: number;
+  } | null>(null);
 
   useEffect(() => {
     const fetchStream = async () => {
@@ -40,6 +44,13 @@ export default function SetUpAudio() {
       }
     };
     fetchStream();
+    return () => {
+      if (mediaStream.current) {
+        for (const track of mediaStream.current.getTracks()) {
+          track.stop();
+        }
+      }
+    };
   }, []);
 
   function handleMicClick() {
@@ -133,6 +144,10 @@ export default function SetUpAudio() {
       console.log("error fetching");
     }
   }
+  const handleReset = () => {
+    setCapturedNotes([]);
+    setResult(null);
+  };
 
   return (
     <div>
@@ -148,10 +163,22 @@ export default function SetUpAudio() {
       <p>{capturedNotes.length} notes captured</p>
 
       {result && (
-        <p>
-          {result.chord} (score {result.score})
-        </p>
+        <>
+          <p>
+            {result.chord} (score {result.score})
+          </p>
+        </>
       )}
+      <Fretboard
+        pitchClasses={result ? result.notes : []}
+        root={result ? result.root : -1}
+      />
+      <button
+        onClick={handleReset}
+        disabled={isRecording || capturedNotes.length == 0}
+      >
+        Reset Notes
+      </button>
     </div>
   );
 }

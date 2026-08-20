@@ -4,6 +4,7 @@ import SetUpAudio from "./components/audio_recorder";
 function App() {
   return (
     <>
+      <h1>Chord Ghost</h1>
       <div className="fileUpload">
         <FileUploader />
       </div>

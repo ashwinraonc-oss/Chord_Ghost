@@ -1,0 +1,36 @@
+.fretboard{
+    display:flex;
+    align-items: center;
+    flex-direction: column-reverse;
+    
+}
+.fret-cell{
+    display: flex;
+    width: 30px;
+    height: 30px;
+    border-right: 2px solid #333;
+    align-items: center;
+    justify-content: center;
+    position:relative;
+
+}
+.note-dot{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: transparent;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 50%);
+}
+.root-note{
+    background-color: #b93c3c;
+}
+.chord-tone{
+    background-color: #faf6f6;
+}
+.fret-row{
+    display: flex;
+    border-bottom: 2px solid #333
+}

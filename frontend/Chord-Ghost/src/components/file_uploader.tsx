@@ -27,10 +27,10 @@ export default function FileUploader() {
       console.log("error fetching");
     }
   }
+
   return (
     <div className="space-y-2">
       <div>
-        <h1>Upload File</h1>
         <input
           type="file"
           accept="audio/*"

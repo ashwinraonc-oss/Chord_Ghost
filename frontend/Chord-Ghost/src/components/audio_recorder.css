@@ -1,0 +1,61 @@
+
+
+.mic-toggle{
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    background-color: #c21322;
+    color: #fff;
+    font-size: 33px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.25s;
+}
+.mic-toggle.is-recording::after{
+    animation: smoothPadAfter 0.6s ease-in alternate-reverse forwards infinite;
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(212, 101, 101, 0.4);
+}
+.mic-toggle.is-recording::before{
+    animation: smoothPadBefore 0.6s ease-in alternate-reverse forwards infinite;
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(223, 96, 111, 0.4);
+    
+}
+
+@keyframes smoothPadAfter{
+    0% {
+        top: -2rem;
+        left: -2rem;
+        right: -2rem;
+        bottom: -2rem;
+    }
+    100% {
+        top: -1rem;
+        left: -1rem;
+        right: -1rem;
+        bottom: -1rem;
+    }
+}
+@keyframes smoothPadBefore{
+    0% {
+        top: -1rem;
+        left: -1rem;
+        right: -1rem;
+        bottom: -1rem;
+    }
+    100% {
+        top: -0.5rem;
+        left: -0.5rem;
+        right: -0.5rem;
+        bottom: -0.5rem;
+    }
+}

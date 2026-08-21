@@ -7,7 +7,7 @@ export default function SetUpAudio() {
   const mediaStream = useRef<MediaStream | null>(null);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const chunks = useRef<Blob[]>([]);
-  const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
+  const [capturedNotes, setCapturedNotes] = useState<Blob[]>([]);
   const [result, setResult] = useState<{
     chord: string;
     score: number;
@@ -34,7 +34,7 @@ export default function SetUpAudio() {
               type: "audio",
             });
             const converted_audio = await convertAudio(recordedBlob);
-            setRecordedAudio(converted_audio);
+            setCapturedNotes((prev) => [...prev, converted_audio]);
 
             chunks.current = [];
           };
@@ -126,11 +126,13 @@ export default function SetUpAudio() {
   }
 
   async function submit_audio() {
-    if (recordedAudio === null) {
+    if (capturedNotes.length == 0) {
       return;
     }
     const formData = new FormData();
-    formData.append("file", recordedAudio);
+    for (const note of capturedNotes) {
+      formData.append("files", note);
+    }
     try {
       const response = await fetch("http://127.0.0.1:8000/detect", {
         method: "POST",
@@ -143,7 +145,7 @@ export default function SetUpAudio() {
     }
   }
   const handleReset = () => {
-    setRecordedAudio(null);
+    setCapturedNotes([]);
     setResult(null);
   };
 
@@ -158,7 +160,7 @@ export default function SetUpAudio() {
       <button className="submit" onClick={submit_audio}>
         Detect Chord
       </button>
-      {recordedAudio !== null && <p>Recording Ready</p>}
+      <p>{capturedNotes.length} notes captured</p>
 
       {result && (
         <>
@@ -173,7 +175,7 @@ export default function SetUpAudio() {
       />
       <button
         onClick={handleReset}
-        disabled={isRecording || recordedAudio === null}
+        disabled={isRecording || capturedNotes.length == 0}
       >
         Reset Notes
       </button>

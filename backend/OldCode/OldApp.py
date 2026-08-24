@@ -1,8 +1,7 @@
 from fastapi import FastAPI, UploadFile, File
 import os, tempfile
-from detection.detect_chord import detect_pitch_class, identify_chord, get_onset_times
+from detection.IdentifyChord import detect_pitch_class, identify_chord
 from fastapi.middleware.cors import CORSMiddleware
-from detection.chord_voicings import chord_voicings
 origins = [
     "http://localhost:5173",
     "http://localhost:5174"
@@ -39,52 +38,30 @@ def health():
     return {"status": "ok"}
 
 @app.post("/detect")
-async def detect(file: UploadFile = File(...)):
+async def detect(files: list[UploadFile] = File(...)):
     note_set = set()
-    contents = await file.read()
-    with tempfile.NamedTemporaryFile(delete = False, suffix = ".wav") as tmp:
-        tmp.write(contents)
-        temp_path = tmp.name
-    
-    try:
-        note_array, sr = get_onset_times(temp_path)
-        for note in note_array:
-            pitch_class = detect_pitch_class(note, sr)
+    for upload in files:
+        contents = await upload.read()
+        with tempfile.NamedTemporaryFile(delete = False, suffix = ".wav") as tmp:
+            tmp.write(contents)
+            temp_path = tmp.name
+
+        try: 
+            pitch_class = detect_pitch_class(temp_path)
             if pitch_class is not None:
                 note_set.add(pitch_class)
 
-    finally:os.remove(temp_path)
-    
+        finally:os.remove(temp_path)
+
     candidate, score = identify_chord(note_set, chord_type)
     if candidate is not None and score >= 2:
         root = note_dictionary[candidate[0]]
-        root_num = candidate[0]
         quality = candidate[1]
         chord = root + " " + quality
-        voicing_lookup = "Unknown Chord Voicing"
-        if quality == "Major":
-            voicing = frozenset({root_num, (root_num + 4)%12, (root_num + 7)%12})
-            voicing_lookup = chord_voicings[voicing]
-
-        # elif quality == "Minor":
-
-        # elif quality == "Dim":
-        # elif quality == "Aug":
-        # elif quality == "7":
-        # elif quality == "Maj7":
-        # elif quality == "m7":
-        # elif quality == "m7♭5":
-        # elif quality == "Dim7":
-        # elif quality == "sus2":
-        # elif quality == "sus4": 
-
-
     else:
         chord = "Unknown Chord Voicing"
-        voicing_lookup = "Unknown Chord Voicing"
-    res_root = None
     if candidate is not None:
         res_root = candidate[0]
-    return {"chord": chord, "score": score, "notes": sorted(note_set), "root": res_root, "voicing": voicing_lookup}
+    return {"chord": chord, "score": score, "notes": sorted(note_set), "root": res_root}
 
 

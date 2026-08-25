@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./audio_recorder.css";
 import Fretboard from "./find_notes";
+import RenderFretboard from "./CreateDiagrams";
 
 export default function SetUpAudio() {
   const [isRecording, setIsRecording] = useState(false);
@@ -13,6 +14,7 @@ export default function SetUpAudio() {
     score: number;
     notes: number[];
     root: number;
+    voicing: number[][] | string;
   } | null>(null);
 
   useEffect(() => {
@@ -165,12 +167,19 @@ export default function SetUpAudio() {
           <p>
             {result.chord} (score {result.score})
           </p>
+          {Array.isArray(result.voicing) && (
+            <div className="voicings-container">
+              {result.voicing.map((voicing, i) => (
+                <RenderFretboard key={i} fret_array={voicing} />
+              ))}
+            </div>
+          )}
         </>
       )}
-      <Fretboard
+      {/* <Fretboard
         pitchClasses={result ? result.notes : []}
         root={result ? result.root : -1}
-      />
+      /> */}
       <button
         onClick={handleReset}
         disabled={isRecording || recordedAudio === null}

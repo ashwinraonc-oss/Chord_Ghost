@@ -13,6 +13,7 @@ export default function SetUpAudio() {
     score: number;
     notes: number[];
     root: number;
+    voicing: number[][] | string;
   } | null>(null);
 
   useEffect(() => {

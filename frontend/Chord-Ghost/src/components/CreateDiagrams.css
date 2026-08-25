@@ -1,0 +1,35 @@
+
+.voicings-container{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 35px;
+    justify-content: center;
+}
+.voicing-diagram{
+    position: relative;
+}
+.voicing-header{
+    /* display: flex; */
+    position: relative;
+    height: 25px;
+
+}
+.voicing-board{
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+.voicing-dot{
+    position: absolute;
+    height: 13px;
+    width: 13px;
+    border-radius: 50%;
+    background-color: aqua;
+    transform: translate(-50%, 20%);
+
+}
+.fret-label{
+    position: absolute;
+    left: -25px;
+    font-size: 15px;
+}

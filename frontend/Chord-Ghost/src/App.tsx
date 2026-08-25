@@ -5,9 +5,9 @@ function App() {
   return (
     <>
       <h1>Chord Ghost</h1>
-      <div className="fileUpload">
+      {/* <div className="fileUpload">
         <FileUploader />
-      </div>
+      </div> */}
       <div>
         <SetUpAudio />
       </div>

@@ -23,6 +23,8 @@ chord_type = {frozenset([0,4,7]): "Major",
               frozenset([0,3,6,9]): "Dim7",
               frozenset([0,2,7]): "sus2",
               frozenset([0,5,7]): "sus4"}
+quality_intervals = {name: sorted(intervals) for intervals, name in chord_type.items()}
+
 
 app = FastAPI()
 
@@ -62,23 +64,13 @@ async def detect(file: UploadFile = File(...)):
         quality = candidate[1]
         chord = root + " " + quality
         voicing_lookup = "Unknown Chord Voicing"
-        if quality == "Major":
-            voicing = frozenset({root_num, (root_num + 4)%12, (root_num + 7)%12})
-            voicing_lookup = chord_voicings[voicing]
-
-        # elif quality == "Minor":
-
-        # elif quality == "Dim":
-        # elif quality == "Aug":
-        # elif quality == "7":
-        # elif quality == "Maj7":
-        # elif quality == "m7":
-        # elif quality == "m7♭5":
-        # elif quality == "Dim7":
-        # elif quality == "sus2":
-        # elif quality == "sus4": 
-
-
+        intervals = quality_intervals.get(quality)
+        if intervals is not None:
+            voicing_key = frozenset((root_num + iv) % 12 for iv in intervals)
+            voicing_lookup = chord_voicings.get(voicing_key)
+            if voicing_lookup is not None:
+                voicing_lookup = [
+                    v for v in voicing_lookup if all(fret <= 16 for fret in v if fret != -1)]
     else:
         chord = "Unknown Chord Voicing"
         voicing_lookup = "Unknown Chord Voicing"

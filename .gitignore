@@ -19,3 +19,9 @@ env/
 # --- OS / editor cruft ---
 .DS_Store
 Thumbs.db
+
+# --- Node dependencies (regenerable via npm install) ---
+node_modules/
+
+# --- Blender auto-backup files ---
+*.blend1

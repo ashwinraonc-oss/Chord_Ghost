@@ -1715,18 +1715,6 @@ B_sus4_Voicings = [
 
 
 chord_voicings = {
-    # frozenset({4,8,11}):E_Major_Voicings,
-    # frozenset({9,1,4}):A_Major_Voicings,
-    # frozenset({11,3,6}):B_Major_Voicings,
-    # frozenset({0,4,7}):C_Major_Voicings,
-    # frozenset({2,6,9}):D_Major_Voicings,
-    # frozenset({0,5,9}):F_Major_Voicings,
-    # frozenset({7,11,2}):G_Major_Voicings,
-    # frozenset({10,2,5}):Asharp_Major_Voicings,
-    # frozenset({1,5,8}):Csharp_Major_Voicings,
-    # frozenset({3,7,10}):Dsharp_Major_Voicings,
-    # frozenset({6,10,1}):Fsharp_Major_Voicings,
-    # frozenset({8,0,3}):Gsharp_Major_Voicings,
     frozenset({0, 1, 5, 8}): Csharp_maj7th_Voicings,  # C#maj7th
     frozenset({0, 2, 5, 8}): D_m7b5_Voicings,  # Dm7b5
     frozenset({0, 2, 5, 9}): D_min7_Voicings,  # Dmin7

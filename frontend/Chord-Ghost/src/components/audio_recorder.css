@@ -30,6 +30,21 @@
     background-color: rgba(223, 96, 111, 0.4);
     
 }
+.results-panel{
+    position: fixed;
+  top: 120px;
+  right: 24px;
+  width: 320px;
+  max-width: 90vw;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  z-index: 1;
+  text-align: left;
+  pointer-events: auto;
+}
+.Chord-Result{
+    text-align: center;
+}
 
 @keyframes smoothPadAfter{
     0% {

@@ -40,7 +40,7 @@ export default function FileUploader() {
         <button onClick={handleSubmit}>Detect Chord</button>
         {result && (
           <p>
-            {result.chord} (score {result.score})
+            Chord Detected: {result.chord} (score {result.score})
           </p>
         )}
       </div>

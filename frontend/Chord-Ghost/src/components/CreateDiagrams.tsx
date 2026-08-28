@@ -26,7 +26,6 @@ export default function RenderFretboard({ fret_array }: FretBoardProps) {
   const dots: JSX.Element[] = [];
   for (let j = 0; j < 6; j++) {
     if (fret_array[j] !== -1 && fret_array[j] > 0) {
-      //   const row = ((fret_array[j] - min) / 5) * 100;
       const row = ((fret_array[j] - min - bandOffset) / 5) * 100;
       const hPos = j * col_val;
       dots.push(

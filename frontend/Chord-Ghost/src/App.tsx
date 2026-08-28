@@ -1,5 +1,4 @@
 import "./App.css";
-import FileUploader from "./components/file_uploader";
 import SetUpAudio from "./components/audio_recorder";
 import AmpScene from "./components/amp/AmpScene";
 import { useState, useRef, useEffect } from "react";

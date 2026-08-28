@@ -1,5 +1,4 @@
 import "./audio_recorder.css";
-import Fretboard from "./find_notes";
 import RenderFretboard from "./CreateDiagrams";
 
 type SetUpAudioProps = {

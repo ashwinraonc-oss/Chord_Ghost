@@ -1,5 +1,5 @@
 import "./App.css";
-import SetUpAudio from "./components/audio_recorder";
+import SetUpAudio from "./components/audioRecording/audio_recorder";
 import AmpScene from "./components/amp/AmpScene";
 import { useState, useRef, useEffect } from "react";
 
@@ -149,11 +149,21 @@ function App() {
     setRecordedAudio(null);
     setResult(null);
   };
+  function handlePlayBack() {
+    if (!recordedAudio) {
+      return;
+    } else {
+      const url = URL.createObjectURL(recordedAudio);
+      const audio = new Audio(url);
+      audio.play();
+      audio.onended = () => URL.revokeObjectURL(url);
+    }
+  }
 
   return (
     <>
       <div className="grain-overlay" />
-      <h1 className="title">Chord Ghost</h1>
+      <h1 className="title">Chord Detector</h1>
       {/* <div className="fileUpload">
         <FileUploader />
       </div> */}
@@ -173,6 +183,7 @@ function App() {
           submit_audio={submit_audio}
           handleReset={handleReset}
           isRecording={isRecording}
+          handlePlayBack={handlePlayBack}
         />
       </div>
     </>

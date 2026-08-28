@@ -5,8 +5,10 @@
   width: 100vw;
   height: 100vh;
   z-index: -1;
+  background: radial-gradient(circle at 50% 45%, #ffd76a 0%, #ffc737 45%, #e8a927 100%);
+
 }
 .title{
     font-family: 'Changa One';
-    font-weight: 400px;
+    font-weight: 100px;
 }

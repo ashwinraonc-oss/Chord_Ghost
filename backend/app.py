@@ -59,10 +59,11 @@ async def detect(file: UploadFile = File(...)):
     
     candidate, score = identify_chord(note_set, chord_type)
     if candidate is not None and score >= 2:
+        
         root = note_dictionary[candidate[0]]
         root_num = candidate[0]
         quality = candidate[1]
-        chord = root + " " + quality
+        chord = root + quality
         voicing_lookup = "Unknown Chord Voicing"
         intervals = quality_intervals.get(quality)
         if intervals is not None:
@@ -75,8 +76,13 @@ async def detect(file: UploadFile = File(...)):
         chord = "Unknown Chord Voicing"
         voicing_lookup = "Unknown Chord Voicing"
     res_root = None
+    confidence = None
     if candidate is not None:
-        res_root = candidate[0]
-    return {"chord": chord, "score": score, "notes": sorted(note_set), "root": res_root, "voicing": voicing_lookup}
+        res_root, quality = candidate
+        best_template = quality_intervals.get(quality)
+        rel = {(item - res_root) % 12 for item in note_set}
+        matched = set(best_template).intersection(rel)
+        confidence = round((2*len(matched) / (len(note_set) + len(best_template)))*100)
+    return {"chord": chord, "score": confidence, "notes": sorted(note_set), "root": res_root, "voicing": voicing_lookup}
 
 

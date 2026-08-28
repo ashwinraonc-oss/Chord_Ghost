@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./audio_recorder.css";
-import Fretboard from "../find_notes";
+import Fretboard from "../audioRecording/find_notes";
 
 export default function SetUpAudio() {
   const [isRecording, setIsRecording] = useState(false);

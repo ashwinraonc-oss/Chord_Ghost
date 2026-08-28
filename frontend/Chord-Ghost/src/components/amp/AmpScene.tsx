@@ -9,13 +9,16 @@ import {
   SelectiveBloom,
   Bloom,
 } from "@react-three/postprocessing";
+import { useFrame } from "@react-three/fiber";
 // import { Backdrop } from "@react-three/drei";
+import { useMemo } from "react";
 
 type AmpSceneProps = {
   handleMicClick: () => void;
   submit_audio: () => void;
   handleReset: () => void;
   isRecording: boolean;
+  handlePlayBack: () => void;
 };
 type MicSceneProps = {
   handleMicClick: () => void;
@@ -24,38 +27,103 @@ type NeonTreeProps = {
   neonRef: React.RefObject<THREE.Mesh | null>;
   isRecording: boolean;
 };
-// camera={{ fov: 50, position: [0, 0, 100] }
+
 export default function AmpScene({
   handleMicClick,
   submit_audio,
   handleReset,
   isRecording,
+  handlePlayBack,
 }: AmpSceneProps) {
   const neonRef = useRef<THREE.Mesh>(null);
   return (
     <Canvas orthographic dpr={[1, 2]} gl={{ antialias: true }}>
-      <mesh position={[0, 0, -20]}>
-        <planeGeometry args={[500, 300]} />
-        <meshStandardMaterial color="#e9be47" />
-      </mesh>
       <OrthographicCamera makeDefault position={[0, 0, 60]} zoom={8.2} />
-      {/* <ambientLight intensity={0.5} /> */}
-      {/* <pointLight position={[-100, 0, 30]} color="#ffb266" intensity={1} /> */}
-      <directionalLight position={[5, 5, 5]} />
-      <Environment preset="sunset" environmentIntensity={1} />
+      <directionalLight position={[0, 0, 0]} />
+      <Environment preset="sunset" environmentIntensity={1.5} />
       <AmpModel
         handleMicClick={handleMicClick}
         submit_audio={submit_audio}
         handleReset={handleReset}
         isRecording={isRecording}
+        handlePlayBack={handlePlayBack}
       />
       <group position={[-5, -10, 50]} rotation={[Math.PI, Math.PI, 21.5]}>
         <MicModel handleMicClick={handleMicClick} />
       </group>
-      <group position={[-97, 10, 10]} rotation={[-Math.PI / 2, 0, Math.PI]}>
+      <group position={[-97, 10, -10]} rotation={[-Math.PI / 2, 0.2, Math.PI]}>
         <NeonTree isRecording={isRecording} neonRef={neonRef} />
       </group>
-      <OrbitControls enableRotate={false} enableZoom={false} />
+
+      <group
+        position={[70, 43, -30]}
+        scale={1}
+        rotation={[Math.PI, Math.PI, Math.PI + 4]}
+      >
+        <Center>
+          <FloatingGuitar floatSpeed={1.2} floatHeight={2} phase={Math.PI}>
+            <CardboardGuitarE />
+          </FloatingGuitar>
+        </Center>
+      </group>
+      <group
+        position={[40, 40, -30]}
+        scale={1}
+        rotation={[Math.PI, 0, Math.PI - 10]}
+      >
+        <Center>
+          <FloatingGuitar floatSpeed={1.2} floatHeight={2} phase={Math.PI / 2}>
+            <CardboardGuitarA />
+          </FloatingGuitar>
+        </Center>
+      </group>
+      <group
+        position={[70, -40, -50]}
+        scale={0.8}
+        rotation={[Math.PI, 0, Math.PI - 10]}
+      >
+        <Center>
+          <FloatingGuitar floatSpeed={1.2} floatHeight={2} phase={Math.PI - 30}>
+            <CardboardGuitarA />
+          </FloatingGuitar>
+        </Center>
+      </group>
+      <group
+        position={[-50, 45, -30]}
+        scale={1.2}
+        rotation={[Math.PI, Math.PI, Math.PI + 21]}
+      >
+        <Center>
+          <FloatingGuitar floatSpeed={1.2} floatHeight={2} phase={0}>
+            <CardboardGuitarE />
+          </FloatingGuitar>
+        </Center>
+      </group>
+      <group
+        position={[-95, -15, -50]}
+        scale={1}
+        rotation={[Math.PI, Math.PI, Math.PI + 21]}
+      >
+        <Center>
+          <FloatingGuitar floatSpeed={1.2} floatHeight={2} phase={50}>
+            <CardboardGuitarA />
+          </FloatingGuitar>
+        </Center>
+      </group>
+      <group
+        position={[0, -43, 0]}
+        scale={1}
+        rotation={[Math.PI, Math.PI, Math.PI - 5.5]}
+      >
+        <Center>
+          <FloatingGuitar floatSpeed={1.2} floatHeight={2} phase={20}>
+            <CardboardGuitarE />
+          </FloatingGuitar>
+        </Center>
+      </group>
+
+      {/* <OrbitControls enableRotate={false} enableZoom={false} /> */}
+      <OrbitControls />
       <EffectComposer>
         <Bloom
           luminanceThreshold={1}
@@ -72,10 +140,28 @@ function AmpModel({
   submit_audio,
   handleReset,
   isRecording,
+  handlePlayBack,
 }: AmpSceneProps) {
   const switch1ref = useRef<THREE.Mesh>(null);
   const switch2ref = useRef<THREE.Mesh>(null);
   const switch3ref = useRef<THREE.Mesh>(null);
+  const knob1ref = useRef<THREE.Mesh>(null);
+  const knobTargetRef = useRef(0);
+
+  useFrame((_, delta) => {
+    if (knob1ref.current) {
+      knob1ref.current.rotation.x = THREE.MathUtils.damp(
+        knob1ref.current.rotation.x,
+        knobTargetRef.current,
+        6, // smoothing speed — higher = snappier, lower = slower/floatier
+        delta,
+      );
+    }
+  });
+  function turnKnob(handler: () => void) {
+    knobTargetRef.current = knobTargetRef.current === 0 ? -Math.PI : 0;
+    handler();
+  }
 
   function flipSwitch(
     ref: React.RefObject<THREE.Mesh | null>,
@@ -141,7 +227,7 @@ function AmpModel({
         rotation={[Math.PI / 2, Math.PI, Math.PI / 2]}
       >
         <mesh geometry={nodes.defaultMaterial001.geometry}>
-          <meshStandardMaterial color="#e0dad5" roughness={0.6} metalness={0} />
+          <meshStandardMaterial color="#5b95e2" roughness={0.6} metalness={0} />
         </mesh>
 
         <mesh
@@ -171,6 +257,16 @@ function AmpModel({
           material={materials.switches_1}
         />
         <mesh
+          ref={knob1ref}
+          onClick={() => turnKnob(handlePlayBack)}
+          onPointerOver={() => {
+            if (knob1ref.current) knob1ref.current.scale.set(1.2, 1.2, 1.2);
+            document.body.style.cursor = "pointer";
+          }}
+          onPointerOut={() => {
+            if (knob1ref.current) knob1ref.current.scale.set(1, 1, 1);
+            document.body.style.cursor = "default";
+          }}
           geometry={nodes.Knob1.geometry}
           material={materials.knob_1}
           position={nodes.Knob1.position}
@@ -328,7 +424,7 @@ function NeonTree({ neonRef, isRecording }: NeonTreeProps) {
   const { scene, materials } = useGLTF(
     "/models/NeonTree.glb",
   ) as unknown as NeonTreeGLTFResult;
-  const glowIntensity = isRecording ? 23 : 0;
+  const glowIntensity = isRecording ? 3 : 0;
 
   materials[
     "Sonata_28_0f4f3201-ebe1-46fe-97a5-133aa3aaf8a8"
@@ -349,4 +445,46 @@ function NeonTree({ neonRef, isRecording }: NeonTreeProps) {
   materials["Sonata_9_2c03ab2d-c77c-42f5-a7d0-40c365fe9adb"].needsUpdate = true;
   console.log(isRecording);
   return <primitive ref={neonRef} object={scene} scale={0.09} />;
+}
+function RedGuitar() {
+  const { scene } = useGLTF("/models/red_guitar.glb");
+  return <primitive object={scene}></primitive>;
+}
+function CardboardGuitarE() {
+  const { scene } = useGLTF("/models/cardboard_electric_guitar.glb");
+  const clonedScene = useMemo(() => scene.clone(), [scene]);
+  return <primitive object={clonedScene} />;
+}
+function CardboardGuitarA() {
+  const { scene } = useGLTF("/models/cardboard_guitar.glb");
+  const clonedScene = useMemo(() => scene.clone(), [scene]);
+  return <primitive object={clonedScene} />;
+}
+function PinkGuitar() {
+  const { scene } = useGLTF("/models/pink_guitar.glb");
+  return <primitive object={scene}></primitive>;
+}
+function BlueGuitar() {
+  const { scene } = useGLTF("/models/blue_guitar.glb");
+  return <primitive object={scene}></primitive>;
+}
+function FloatingGuitar({
+  children,
+  floatSpeed = 1,
+  floatHeight = 2,
+  phase = 0,
+}: {
+  children: React.ReactNode;
+  floatSpeed?: number;
+  floatHeight?: number;
+  phase?: number;
+}) {
+  const ref = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.position.y =
+        Math.sin(state.clock.elapsedTime * floatSpeed + phase) * floatHeight;
+    }
+  });
+  return <group ref={ref}>{children}</group>;
 }

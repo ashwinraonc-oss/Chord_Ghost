@@ -26,11 +26,23 @@ export default function SetUpAudio({
 }: SetUpAudioProps) {
   return (
     <div>
-      {recordedAudio !== null && <p>Recording Ready</p>}
+      <div className="recording-ready">
+        {recordedAudio !== null && <p>Recording Ready</p>}
+      </div>
       <div className="results-panel">
         {result && (
           <>
-            <p className="Chord-Result">Chord Detected: {result.chord}</p>
+            {result.notes.length === 0 ? (
+              <p className="Chord-Result">No notes detected</p>
+            ) : (
+              <>
+                <p className="Chord-Result">
+                  Chord Detected: {result.chord}
+                  <br />
+                  Confidence: {result.score}%
+                </p>
+              </>
+            )}
             {Array.isArray(result.voicing) && (
               <div className="voicings-container">
                 {result.voicing.map((voicing, i) => (

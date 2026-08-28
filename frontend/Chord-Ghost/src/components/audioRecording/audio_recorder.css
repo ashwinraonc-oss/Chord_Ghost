@@ -44,6 +44,13 @@
 }
 .Chord-Result{
     text-align: center;
+    font-family: "Changa One";
+    font-weight: 100px;
+}
+.recording-ready{
+    text-align: center;
+    font-family: "Changa One";
+    font-weight: 100px;
 }
 
 @keyframes smoothPadAfter{

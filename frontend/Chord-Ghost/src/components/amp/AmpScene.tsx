@@ -4,14 +4,11 @@ import * as THREE from "three";
 import { type GLTF } from "three-stdlib";
 import { useRef } from "react";
 import { OrthographicCamera } from "@react-three/drei";
-import {
-  EffectComposer,
-  SelectiveBloom,
-  Bloom,
-} from "@react-three/postprocessing";
+import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useFrame } from "@react-three/fiber";
 // import { Backdrop } from "@react-three/drei";
 import { useMemo } from "react";
+import type { metalness } from "three/tsl";
 
 type AmpSceneProps = {
   handleMicClick: () => void;
@@ -122,8 +119,8 @@ export default function AmpScene({
         </Center>
       </group>
 
-      {/* <OrbitControls enableRotate={false} enableZoom={false} /> */}
-      <OrbitControls />
+      <OrbitControls enableRotate={false} enableZoom={false} />
+      {/* <OrbitControls /> */}
       <EffectComposer>
         <Bloom
           luminanceThreshold={1}
@@ -227,13 +224,14 @@ function AmpModel({
         rotation={[Math.PI / 2, Math.PI, Math.PI / 2]}
       >
         <mesh geometry={nodes.defaultMaterial001.geometry}>
-          <meshStandardMaterial color="#5b95e2" roughness={0.6} metalness={0} />
+          <meshStandardMaterial color="#ecf0f1" roughness={0.6} metalness={0} />
         </mesh>
 
         <mesh
           geometry={nodes.defaultMaterial002.geometry}
           material={materials.corners}
         />
+
         <mesh
           geometry={nodes.defaultMaterial003.geometry}
           material={materials.detail_1}

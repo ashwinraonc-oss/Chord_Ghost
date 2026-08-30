@@ -4,10 +4,12 @@ import RenderFretboard from "./CreateDiagrams";
 type SetUpAudioProps = {
   isRecording: boolean;
   recordedAudio: Blob | null;
+  isDetecting: boolean;
   result: {
     chord: string;
     score: number;
     notes: number[];
+    note_names: string[];
     root: number;
     voicing: number[][] | string;
   } | null;
@@ -23,11 +25,13 @@ export default function SetUpAudio({
   onMicClick,
   onDetect,
   onReset,
+  isDetecting,
 }: SetUpAudioProps) {
   return (
     <div>
       <div className="recording-ready">
         {recordedAudio !== null && <p>Recording Ready</p>}
+        {isDetecting && <div className="loading-spinner" />}
       </div>
       <div className="results-panel">
         {result && (
@@ -40,6 +44,8 @@ export default function SetUpAudio({
                   Chord Detected: {result.chord}
                   <br />
                   Confidence: {result.score}%
+                  <br />
+                  Detected Notes: {result.note_names.join("-")}
                 </p>
               </>
             )}
@@ -56,5 +62,3 @@ export default function SetUpAudio({
     </div>
   );
 }
-
-// Chord Detected: {result.chord} (score {result.score})

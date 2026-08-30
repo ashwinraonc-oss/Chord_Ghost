@@ -9,10 +9,12 @@ function App() {
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const mediaStream = useRef<MediaStream | null>(null);
   const chunks = useRef<Blob[]>([]);
+  const [isDetecting, setIsDetecting] = useState(false);
   const [result, setResult] = useState<{
     chord: string;
     score: number;
     notes: number[];
+    note_names: string[];
     root: number;
     voicing: number[][] | string;
   } | null>(null);
@@ -87,6 +89,7 @@ function App() {
     if (recordedAudio === null) {
       return;
     }
+    setIsDetecting(true);
     const formData = new FormData();
     formData.append("file", recordedAudio);
     try {
@@ -98,6 +101,8 @@ function App() {
       setResult(data);
     } catch {
       console.log("error fetching");
+    } finally {
+      setIsDetecting(false);
     }
   }
 
@@ -164,9 +169,6 @@ function App() {
     <>
       <div className="grain-overlay" />
       <h1 className="title">Chord Detector</h1>
-      {/* <div className="fileUpload">
-        <FileUploader />
-      </div> */}
       <div>
         <SetUpAudio
           isRecording={isRecording}
@@ -175,6 +177,7 @@ function App() {
           onMicClick={handleMicClick}
           onDetect={submit_audio}
           onReset={handleReset}
+          isDetecting={isDetecting}
         />
       </div>
       <div className="amp-container">

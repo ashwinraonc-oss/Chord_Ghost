@@ -11,9 +11,9 @@ export default function RenderFretboard({ fret_array }: FretBoardProps) {
   );
 
   const cells: JSX.Element[] = [];
-  const hasOpenString = fret_array.includes(0);
-  const bandOffset = hasOpenString ? 1 : 0;
-  const min = hasOpenString ? 0 : Math.min(...filteredNumbers);
+  const min = filteredNumbers.length > 0 ? Math.min(...filteredNumbers) : 0;
+  const maxFret = filteredNumbers.length > 0 ? Math.max(...filteredNumbers) : 0;
+  const usesAbsolutePosition = maxFret <= 3;
   for (let i = 0; i < 6; i++) {
     const value = fret_array[i];
     const marker = value === -1 ? "x" : value === 0 ? "o" : "";
@@ -26,7 +26,9 @@ export default function RenderFretboard({ fret_array }: FretBoardProps) {
   const dots: JSX.Element[] = [];
   for (let j = 0; j < 6; j++) {
     if (fret_array[j] !== -1 && fret_array[j] > 0) {
-      const row = ((fret_array[j] - min - bandOffset) / 5) * 100;
+      const row = usesAbsolutePosition
+        ? (fret_array[j] / 5) * 100
+        : ((fret_array[j] - min) / 5) * 100;
       const hPos = j * col_val;
       dots.push(
         <div
@@ -72,7 +74,7 @@ export default function RenderFretboard({ fret_array }: FretBoardProps) {
   return (
     <div className="voicing-diagram">
       <div className="voicing-header">{cells}</div>
-      {!hasOpenString && <div className="fret-label">{min}</div>}
+      {!usesAbsolutePosition && <div className="fret-label">{min}</div>}
       <div className="voicing-board" style={{ position: "relative" }}>
         {StringLines}
         {FretLines}

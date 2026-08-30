@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File
 import os, tempfile
 from detection.detect_chord import detect_pitch_class, identify_chord, get_onset_times
 from fastapi.middleware.cors import CORSMiddleware
-from detection.chord_voicings import chord_voicings
+from detection.data.dataBuilding.DBLookUp import chord_voicings
 origins = [
     "http://localhost:5173",
     "http://localhost:5174"
@@ -22,7 +22,37 @@ chord_type = {frozenset([0,4,7]): "Major",
               frozenset([0,3,6,10]): "m7♭5",
               frozenset([0,3,6,9]): "Dim7",
               frozenset([0,2,7]): "sus2",
-              frozenset([0,5,7]): "sus4"}
+              frozenset([0,5,7]): "sus4",
+              frozenset([0,4,7,9]): "6",
+            frozenset([0,3,7,9]): "m6",
+            frozenset([0,2,4,7]): "add9",
+            frozenset([0,2,3,7]): "m(add9)",
+            frozenset([0,2,4,7,10]): "9",
+            frozenset([0,2,4,7,11]): "Maj9",
+            frozenset([0,2,3,7,10]): "m9",
+            frozenset([0,4,8,10]): "7#5",
+            frozenset([0,1,4,7,10]): "7b9",
+            frozenset([0,3,4,7,10]): "7#9",
+            frozenset([0,5,7,10]): "7sus4",
+            frozenset([0,2,7,10]): "7sus2",
+            frozenset([0,7]): "5",         # power chord
+            frozenset([0,4,5,7]): "add11",
+            frozenset([0,4,6,10]): "7b5",
+            frozenset([0,4,6,11]): "Maj7b5",
+            frozenset([0,4,8,11]): "Maj7#5",
+            frozenset([0,2,7,11]): "Maj7sus2",
+            frozenset([0,2,5,7]): "sus2sus4",  # 2 and 4, no 3rd
+            frozenset([0,2,4,7,9]): "6/9",
+            frozenset([0,2,4,6,10]): "9b5",
+            frozenset([0,2,4,8,10]): "9#5",
+            frozenset([0,2,4,6,7,10]): "9#11",
+            frozenset([0,2,4,5,7,10]): "11",
+            frozenset([0,3,7,11]): "mMaj7",
+            frozenset([0,3,6,11]): "mMaj7♭5",
+            frozenset([0,2,3,7,9]): "m6/9",
+            frozenset([0,2,3,5,7,10]): "m11",
+            frozenset([0,2,3,5,7,11]): "mMaj11",
+            }
 quality_intervals = {name: sorted(intervals) for intervals, name in chord_type.items()}
 
 
@@ -57,9 +87,8 @@ async def detect(file: UploadFile = File(...)):
 
     finally:os.remove(temp_path)
     
-    candidate, score = identify_chord(note_set, chord_type)
-    if candidate is not None and score >= 2:
-        
+    candidate, confidence = identify_chord(note_set, chord_type)
+    if candidate is not None and confidence >= 0.5:
         root = note_dictionary[candidate[0]]
         root_num = candidate[0]
         quality = candidate[1]
@@ -72,17 +101,26 @@ async def detect(file: UploadFile = File(...)):
             if voicing_lookup is not None:
                 voicing_lookup = [
                     v for v in voicing_lookup if all(fret <= 16 for fret in v if fret != -1)]
+                seen = set()
+                deduped = []
+                for v in voicing_lookup:
+                    key = tuple(v)
+                    if key not in seen:
+                        seen.add(key)
+                        deduped.append(v)
+                voicing_lookup = deduped
     else:
         chord = "Unknown Chord Voicing"
         voicing_lookup = "Unknown Chord Voicing"
-    res_root = None
-    confidence = None
     if candidate is not None:
         res_root, quality = candidate
-        best_template = quality_intervals.get(quality)
-        rel = {(item - res_root) % 12 for item in note_set}
-        matched = set(best_template).intersection(rel)
-        confidence = round((2*len(matched) / (len(note_set) + len(best_template)))*100)
-    return {"chord": chord, "score": confidence, "notes": sorted(note_set), "root": res_root, "voicing": voicing_lookup}
+    res_root = candidate[0] if candidate is not None else None
+    confidence = (confidence * 100) if candidate is not None else 0
+    return {"chord": chord, 
+            "score": round(confidence), 
+            "notes": sorted(note_set),
+            "note_names": [note_dictionary[n] for n in sorted(note_set)],
+            "root": res_root, 
+            "voicing": voicing_lookup}
 
 

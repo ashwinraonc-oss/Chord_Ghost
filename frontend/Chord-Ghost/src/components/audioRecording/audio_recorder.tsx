@@ -43,8 +43,8 @@ export default function SetUpAudio({
                 <p className="Chord-Result">
                   Chord Detected: {result.chord}
                   <br />
-                  Confidence: {result.score}%
-                  <br />
+                  {/* Confidence: {result.score}%
+                  <br /> */}
                   Detected Notes: {result.note_names.join("-")}
                 </p>
               </>

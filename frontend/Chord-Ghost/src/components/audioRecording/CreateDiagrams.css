@@ -7,7 +7,7 @@
     justify-content: center;
     max-height: 60vh;
     overflow-y: auto;
-    border: 3px solid #010300;
+    /* border: 3px solid #eff3ed; */
 
 }
 .voicing-diagram{
@@ -28,7 +28,7 @@
     height: 13px;
     width: 13px;
     border-radius: 50%;
-    background-color: rgb(160, 69, 69);
+    background-color: rgb(224, 210, 16);
     transform: translate(-50%, 20%);
 
 }

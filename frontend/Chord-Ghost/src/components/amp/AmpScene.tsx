@@ -48,8 +48,15 @@ export default function AmpScene({
       <group position={[-5, -10, 50]} rotation={[Math.PI, Math.PI, 21.5]}>
         <MicModel handleMicClick={handleMicClick} />
       </group>
-      <group position={[-97, 10, -10]} rotation={[-Math.PI / 2, 0.2, Math.PI]}>
-        <NeonTree isRecording={isRecording} neonRef={neonRef} />
+      <group position={[-97, 10, -200]} rotation={[-Math.PI / 2, 0.2, Math.PI]}>
+        <FloatingGuitar
+          floatSpeed={1.2}
+          floatHeight={2}
+          phase={Math.PI - 30}
+          floatAxis="z"
+        >
+          <NeonTree isRecording={isRecording} neonRef={neonRef} />
+        </FloatingGuitar>
       </group>
 
       <group
@@ -118,9 +125,23 @@ export default function AmpScene({
           </FloatingGuitar>
         </Center>
       </group>
+      <group
+        position={[95, -45, -50]}
+        rotation={[0, Math.PI + 20, 0]}
+        scale={2}
+      >
+        <NeonPlanet />
+      </group>
+      <group
+        position={[-110, -50, -200]}
+        rotation={[0, Math.PI + 20, 0]}
+        scale={10}
+      >
+        <TheSun />
+      </group>
 
-      <OrbitControls enableRotate={false} enableZoom={false} />
-      {/* <OrbitControls /> */}
+      {/* <OrbitControls enableRotate={false} enableZoom={false} /> */}
+      <OrbitControls />
       <EffectComposer>
         <Bloom
           luminanceThreshold={1}
@@ -422,7 +443,7 @@ function NeonTree({ neonRef, isRecording }: NeonTreeProps) {
   const { scene, materials } = useGLTF(
     "/models/NeonTree.glb",
   ) as unknown as NeonTreeGLTFResult;
-  const glowIntensity = isRecording ? 3 : 0;
+  const glowIntensity = isRecording ? 6 : 0;
 
   materials[
     "Sonata_28_0f4f3201-ebe1-46fe-97a5-133aa3aaf8a8"
@@ -444,6 +465,26 @@ function NeonTree({ neonRef, isRecording }: NeonTreeProps) {
   console.log(isRecording);
   return <primitive ref={neonRef} object={scene} scale={0.09} />;
 }
+
+function NeonPlanet() {
+  const { scene } = useGLTF("/models/neon_planet.glb");
+  return <primitive object={scene}></primitive>;
+}
+function TheSun() {
+  const { scene } = useGLTF("/models/the_sun.glb");
+
+  scene.traverse((child) => {
+    if (child instanceof THREE.Mesh) {
+      const material = child.material as THREE.MeshStandardMaterial;
+      material.emissive = new THREE.Color("orange");
+      material.emissiveIntensity = 3;
+      material.needsUpdate = true;
+    }
+  });
+
+  return <primitive object={scene} />;
+}
+
 function RedGuitar() {
   const { scene } = useGLTF("/models/red_guitar.glb");
   return <primitive object={scene}></primitive>;
@@ -471,17 +512,24 @@ function FloatingGuitar({
   floatSpeed = 1,
   floatHeight = 2,
   phase = 0,
+  floatAxis = "y",
 }: {
   children: React.ReactNode;
   floatSpeed?: number;
   floatHeight?: number;
   phase?: number;
+  floatAxis?: "y" | "z";
 }) {
   const ref = useRef<THREE.Group>(null);
   useFrame((state) => {
     if (ref.current) {
-      ref.current.position.y =
+      const offset =
         Math.sin(state.clock.elapsedTime * floatSpeed + phase) * floatHeight;
+      if (floatAxis === "y") {
+        ref.current.position.y = offset;
+      } else {
+        ref.current.position.z = offset;
+      }
     }
   });
   return <group ref={ref}>{children}</group>;

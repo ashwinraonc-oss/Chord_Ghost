@@ -93,7 +93,7 @@ async def detect(file: UploadFile = File(...)):
         root_num = candidate[0]
         quality = candidate[1]
         chord = root + quality
-        voicing_lookup = "Unknown Chord Voicing"
+        voicing_lookup = []
         intervals = quality_intervals.get(quality)
         if intervals is not None:
             voicing_key = frozenset((root_num + iv) % 12 for iv in intervals)
@@ -111,7 +111,7 @@ async def detect(file: UploadFile = File(...)):
                 voicing_lookup = deduped
     else:
         chord = "Unknown Chord Voicing"
-        voicing_lookup = "Unknown Chord Voicing"
+        voicing_lookup = []
     if candidate is not None:
         res_root, quality = candidate
     res_root = candidate[0] if candidate is not None else None

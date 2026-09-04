@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile, File
 import os, tempfile
-from detection.detect_chord import detect_pitch_class, identify_chord, get_onset_times
+from detection.detect_chord import detect_pitch_class, identify_chord, get_onset_times, filter_voicings
 from fastapi.middleware.cors import CORSMiddleware
 from detection.data.dataBuilding.DBLookUp import chord_voicings
 origins = [
@@ -101,14 +101,15 @@ async def detect(file: UploadFile = File(...)):
             if voicing_lookup is not None:
                 voicing_lookup = [
                     v for v in voicing_lookup if all(fret <= 16 for fret in v if fret != -1)]
-                seen = set()
-                deduped = []
-                for v in voicing_lookup:
-                    key = tuple(v)
-                    if key not in seen:
-                        seen.add(key)
-                        deduped.append(v)
-                voicing_lookup = deduped
+                voicing_lookup = filter_voicings(voicing_lookup)
+                # seen = set()
+                # deduped = []
+                # for v in voicing_lookup:
+                #     key = tuple(v)
+                #     if key not in seen:
+                #         seen.add(key)
+                #         deduped.append(v)
+                # voicing_lookup = deduped
     else:
         chord = "Unknown Chord Voicing"
         voicing_lookup = []

@@ -60,4 +60,15 @@ def identify_chord(pitch_classes, chord_type):
                 best_confidence = confidence
                 best_candidate = (root, name)
     return (best_candidate, best_confidence)
+def filter_voicings(voicings):
+    seen = set()
+    filtered_voicings = []
+    for voicing in voicings:
+        fretted = [f for f in voicing if f > 0]
+        min_fret = min(fretted) if fretted else 0
+        if min_fret not in seen:
+            seen.add(min_fret)
+            filtered_voicings.append(voicing)
+    return filtered_voicings
+            
 
